@@ -18,40 +18,75 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.GridView;
+import android.widget.ListView;
 import android.widget.Toast;
 
 import android.app.WallpaperManager;
 
 
 public class GalleryActivity extends AppCompatActivity {
+
+    private ListView listView;
     private GridView gridView;
-    private GridViewAdapter gridAdapter;
+    private GalleryViewAdapter Adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_gallery);
 
+
+        //messages from start activity. They determine layout and onclickitem listener
         Intent fromStartActivity = getIntent();
-        final String message = fromStartActivity.getStringExtra("galleryMode");
+        final String intentMode = fromStartActivity.getStringExtra("intentChoice");
+        String layoutMode = fromStartActivity.getStringExtra("layoutChoice");
+        System.out.println("Message: " + layoutMode);
 
-        gridView = (GridView) findViewById(R.id.gridView);
-        gridAdapter = new GridViewAdapter(this, R.layout.grid_item_layout, getData());
-        gridView.setAdapter(gridAdapter);
 
-        gridView.setOnItemClickListener(new OnItemClickListener() {
-            public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
-                ImageItem item = (ImageItem) parent.getItemAtPosition(position);
+        if(layoutMode.equals("List")) {
+            System.out.println("in list block");
+            setContentView(R.layout.activity_gallery_list);
+            listView = (ListView) findViewById(R.id.activity_gallery_listView);
+            Adapter = new GalleryViewAdapter(this, R.layout.item_layout_list, getData());
+            listView.setAdapter(Adapter);
 
-                if(message.equals("Wallpaper")) {
-                    setWallpaper(item);
+            listView.setOnItemClickListener(new OnItemClickListener() {
+                public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
+                    ImageItem item = (ImageItem) parent.getItemAtPosition(position);
+
+                    if(intentMode.equals("Wallpaper")) {
+                        setWallpaper(item);
+                    }
+                    else if(intentMode.equals("Share")) {
+                        shareImage(item);
+                    }
                 }
-                else if(message.equals("Share")) {
-                    shareImage(item);
+            });
+        }
+
+
+        else if(layoutMode.equals("Grid")){
+            System.out.println("in grid block");
+            setContentView(R.layout.activity_gallery_grid);
+            gridView = (GridView) findViewById(R.id.activity_gallery_gridView);
+            Adapter = new GalleryViewAdapter(this, R.layout.item_layout_grid, getData());
+            gridView.setAdapter(Adapter);
+
+            gridView.setOnItemClickListener(new OnItemClickListener() {
+                public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
+                    ImageItem item = (ImageItem) parent.getItemAtPosition(position);
+
+                    if(intentMode.equals("Wallpaper")) {
+                        setWallpaper(item);
+                    }
+                    else if(intentMode.equals("Share")) {
+                        shareImage(item);
+                    }
                 }
-            }
-        });
+            });
+        }
+
     }
+
 
     private void setWallpaper(ImageItem item){
         final WallpaperManager wallpaperManager = WallpaperManager.getInstance(getApplicationContext());
@@ -84,7 +119,6 @@ public class GalleryActivity extends AppCompatActivity {
 
 
     private ArrayList getData() {
-
         final ArrayList imageItems = new ArrayList();
         String path = Environment.getExternalStorageDirectory().toString()+"/DCIM/Camera";
         File directory = new File(path);

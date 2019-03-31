@@ -53,7 +53,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="@string/activity_start_radio_wallpaper" />
+            android:text="@string/activity_start_radio_wallpaper"
+            android:checked="true"/>
 
     </RadioGroup>
 

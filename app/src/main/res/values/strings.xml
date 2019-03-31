@@ -1,13 +1,14 @@
 <resources>
-    <string name="app_name">Lista 2 - Galeria obrazków</string>
-    <string name="activity_start_inspiration_1"><a href="https://www.androidauthority.com/how-to-build-an-image-gallery-app-718976">Inspiracia pierwsza!</a></string>
-    <string name="activity_start_inspiration_2"><a href="https://www.stacktips.com/tutorials/android/android-gridview-example-building-image-gallery-in-android">Inspiracia druga!</a></string>
-    <string name="activity_start_to_gallery">Uruchom galerie obrazów</string>
-    <string name="activity_start_author">Autor - Michał Czuba</string>
-    <string name="activity_start_radio_share">Udostępnij</string>
-    <string name="activity_start_radio_wallpaper">Ustaw jako tapetę</string>
+
+    <string name="app_name">List 2 - Image gallery</string>
+    <string name="activity_start_inspiration_1"><a href="https://www.androidauthority.com/how-to-build-an-image-gallery-app-718976">First inspiration!</a></string>
+    <string name="activity_start_inspiration_2"><a href="https://www.stacktips.com/tutorials/android/android-gridview-example-building-image-gallery-in-android">Second inspiration!</a></string>
+    <string name="activity_start_to_gallery">Run image gallery</string>
+    <string name="activity_start_author">Author - Michał Czuba</string>
+    <string name="activity_start_radio_share">Share image</string>
+    <string name="activity_start_radio_wallpaper">Set as wallpaper</string>
     <string name="activity_start_switch_layout_grid">Grid layout selected</string>
-    <string name="activity_start_switch_layout_list">Table layout selected</string>
-    <string name="activity_start_switch_layout_switch">Ustaw layout</string>
+    <string name="activity_start_switch_layout_list">List layout selected</string>
+    <string name="activity_start_switch_layout_switch">Set layout</string>
 
 </resources>

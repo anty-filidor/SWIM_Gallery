@@ -12,12 +12,12 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 
-public class GridViewAdapter extends ArrayAdapter {
+public class GalleryViewAdapter extends ArrayAdapter {
     private Context context;
     private int layoutResourceId;
     private ArrayList data = new ArrayList();
 
-    public GridViewAdapter(Context context, int layoutResourceId, ArrayList data) {
+    public GalleryViewAdapter(Context context, int layoutResourceId, ArrayList data) {
         super(context, layoutResourceId, data);
         this.layoutResourceId = layoutResourceId;
         this.context = context;

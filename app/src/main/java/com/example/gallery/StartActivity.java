@@ -16,6 +16,7 @@ import android.content.SharedPreferences;
 public class StartActivity extends AppCompatActivity {
 
     private String galleryMode = "Wallpaper";
+    private String layoutMode = "List";
     private TextView textView1;
     private TextView textView2;
     private TextView textView3;
@@ -53,29 +54,33 @@ public class StartActivity extends AppCompatActivity {
         switch1 = findViewById(R.id.switch1);
         textView3 = findViewById(R.id.textView3);
 
-        settings = getSharedPreferences("Layout_choice", 0);
+        settings = getSharedPreferences("recentLayoutChoice", 0);
         boolean silent = settings.getBoolean("switchkey", false);
         switch1.setChecked(silent);
 
         if(switch1.isChecked()) {
             textView3.setText(R.string.activity_start_switch_layout_list);
+            layoutMode="List";
         }
         else {
             textView3.setText(R.string.activity_start_switch_layout_grid);
+            layoutMode="Grid";
         }
 
 
         switch1.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if(isChecked){
+                if(switch1.isChecked()) {
                     textView3.setText(R.string.activity_start_switch_layout_list);
+                    layoutMode="List";
                 }
                 else {
                     textView3.setText(R.string.activity_start_switch_layout_grid);
+                    layoutMode="Grid";
                 }
 
-                SharedPreferences settings = getSharedPreferences("Layout_choice", 0);
+                SharedPreferences settings = getSharedPreferences("recentLayoutChoice", 0);
                 SharedPreferences.Editor editor = settings.edit();
                 editor.putBoolean("switchkey", isChecked);
                 editor.commit();
@@ -86,7 +91,8 @@ public class StartActivity extends AppCompatActivity {
 
     public void runGallery(View view) {
         final Intent intentGallery = new Intent(this, GalleryActivity.class);
-        intentGallery.putExtra("galleryMode", galleryMode);
+        intentGallery.putExtra("intentChoice", galleryMode);
+        intentGallery.putExtra("layoutChoice", layoutMode);
         startActivity(intentGallery);
     }
 }
