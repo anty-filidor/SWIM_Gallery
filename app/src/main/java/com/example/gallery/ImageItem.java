@@ -1,24 +1,23 @@
 package com.example.gallery;
 
-import android.graphics.Bitmap;
 
 public class ImageItem {
 
-    private Bitmap image;
+    private String path;
     private String title;
 
-    public ImageItem(Bitmap image, String title) {
+    public ImageItem(String path, String title) {
         super();
-        this.image = image;
+        this.path = path;
         this.title = title;
     }
 
-    public Bitmap getImage() {
-        return image;
+    public String getPath() {
+        return path;
     }
 
-    public void setImage(Bitmap image) {
-        this.image = image;
+    public void setPath(String path) {
+        this.path = path;
     }
 
     public String getTitle() {
@@ -29,3 +28,6 @@ public class ImageItem {
         this.title = title;
     }
 }
+
+
+
