@@ -10,5 +10,8 @@
     <string name="activity_start_switch_layout_grid">Grid layout selected</string>
     <string name="activity_start_switch_layout_list">List layout selected</string>
     <string name="activity_start_switch_layout_switch">Set layout</string>
+    <string name="select_folder">Select folder</string>
+    <string name="select_preferences">Select view</string>
+
 
 </resources>
