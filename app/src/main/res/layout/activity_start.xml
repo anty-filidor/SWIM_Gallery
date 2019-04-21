@@ -58,7 +58,7 @@
     </RadioGroup>
 
     <include
-        layout="@layout/activity_start_switch_layout"
+        layout="@layout/item_switch_layout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:layout_constraintEnd_toEndOf="parent"

@@ -100,36 +100,20 @@ public class GalleryActivity extends AppCompatActivity implements GalleryFragmen
     }
 
 
-    //method to delets
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
 
         switch (item.getItemId()) {
-            case R.id.folder:
-                Toast.makeText(this, "You clicked about", Toast.LENGTH_SHORT).show();
+            case R.id.preferences:
                 showEditDialog();
                 break;
         }
         return true;
     }
 
-
-    public void onFinishEditDialog(String inputText) {
-        Toast.makeText(this, "Hi, " + inputText, Toast.LENGTH_SHORT).show();
-    }
-
     public void onSettingsPassed(String intentMode, String layoutMode) {
         this.intentMode = intentMode;
         this.layoutMode = layoutMode;
-        Toast.makeText(this, intentMode, Toast.LENGTH_SHORT).show();
-        //view accurate layout (in adapter) to user preferences
-        if(layoutMode.equals("Grid")) {
-            adapter = new GalleryRecyclerAdapter(getApplicationContext(), getData(), intentMode, R.layout.item_layout_grid);
-            ((GridLayoutManager) layoutManager).setSpanCount(4);
-        }
-        else{
-            adapter = new GalleryRecyclerAdapter(getApplicationContext(), getData(), intentMode, R.layout.item_layout_list);
-        }
-        recyclerView.setAdapter(adapter);
+        Toast.makeText(this, intentMode.concat(" ").concat(layoutMode), Toast.LENGTH_SHORT).show();
     }
 }

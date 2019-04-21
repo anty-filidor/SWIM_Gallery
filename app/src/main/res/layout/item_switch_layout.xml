@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:paddingLeft="2dp"
+    android:paddingBottom="2dp"
+    android:paddingTop="2dp"
+    android:paddingRight="2dp">
+
+
+    <TextView
+        android:id="@+id/select_layout_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:fontFamily="sans-serif-medium"
+        android:text="@string/select_layout"
+        android:textAlignment="center"
+        android:textAppearance="@android:style/TextAppearance.Widget.Button"
+        android:textSize="14sp" />
+
+    <GridLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:columnCount="2"
+        android:orientation="vertical"
+        android:rowCount="1"
+        android:paddingRight="6dp"
+        android:paddingLeft="6dp"
+        android:layout_gravity="center">
+
+    <Switch
+        android:id="@+id/switch1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:switchPadding="10dp" />
+
+    <TextView
+        android:id="@+id/switch1_textview"
+        android:layout_width="150dp"
+        android:layout_height="wrap_content"
+        android:textAlignment="center"
+        android:background="@drawable/back"
+        />
+</GridLayout>
+</LinearLayout>
