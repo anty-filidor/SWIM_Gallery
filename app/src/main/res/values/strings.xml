@@ -12,6 +12,7 @@
     <string name="activity_start_switch_layout_switch">Set layout</string>
     <string name="select_folder">Select folder</string>
     <string name="select_preferences">Select view</string>
+    <string name="apply">Apply</string>
 
 
 </resources>

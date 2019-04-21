@@ -54,7 +54,7 @@ public class StartActivity extends AppCompatActivity {
         //Handling switch3 and textview3 - setting tevtview3 as it was remembered by settings var
         //in setOnCheckedChangeListener saving state of the switch
         switch1 = findViewById(R.id.switch1);
-        textView3 = findViewById(R.id.textView3);
+        textView3 = findViewById(R.id.switch1_textview);
 
         settings = getSharedPreferences("recentLayoutChoice", 0);
         boolean silent = settings.getBoolean("switchkey", false);

@@ -61,7 +61,6 @@ public class GalleryRecyclerAdapter extends RecyclerView.Adapter <GalleryRecycle
                 }
             }
         });
-
     }
 
     @Override
