@@ -16,7 +16,7 @@ import android.widget.Switch;
 import android.widget.TextView;
 
 
-public class GalleryFragmentSettings extends DialogFragment {
+public class GallerySettingsFragment extends DialogFragment {
 
     private String intentMode = "Wallpaper";
     private String layoutMode = "List";
@@ -32,13 +32,13 @@ public class GalleryFragmentSettings extends DialogFragment {
     }
 
 
-    public GalleryFragmentSettings() {
+    public GallerySettingsFragment() {
         // Empty constructor is required for DialogFragment
     }
 
 
-    public static GalleryFragmentSettings newInstance() {
-        GalleryFragmentSettings frag = new GalleryFragmentSettings();
+    public static GallerySettingsFragment newInstance() {
+        GallerySettingsFragment frag = new GallerySettingsFragment();
         Bundle args = new Bundle();
         frag.setArguments(args);
         return frag;
@@ -121,7 +121,6 @@ public class GalleryFragmentSettings extends DialogFragment {
                 SharedPreferences.Editor editor = settings.edit();
                 editor.putBoolean("switchkey", isChecked);
                 editor.commit();
-                System.out.println(layoutMode);
             }
         });
 

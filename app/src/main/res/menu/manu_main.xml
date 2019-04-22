@@ -9,5 +9,10 @@
         android:title="@string/select_preferences">
     </item>
 
+    <item
+        android:id="@+id/info"
+        android:title="@string/info">
+    </item>
+
 
 </menu>

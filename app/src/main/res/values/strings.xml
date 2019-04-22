@@ -15,6 +15,7 @@
     <string name="apply">Apply</string>
     <string name="select_layout">SELECT LAYOUT</string>
     <string name="select_action">SELECT ON CLICK ACTION</string>
+    <string name="info">App info</string>
 
 
 </resources>
