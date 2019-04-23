@@ -14,7 +14,7 @@ import android.widget.TextView;
 import android.content.SharedPreferences;
 
 
-public class StartActivity extends AppCompatActivity {
+public class Deprecated_StartActivity extends AppCompatActivity {
 
     private String galleryMode = "Wallpaper";
     private String layoutMode = "List";

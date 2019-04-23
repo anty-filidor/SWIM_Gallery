@@ -1,5 +1,7 @@
 package com.example.gallery;
 
+//http://android-er.blogspot.com/2012/07/example-of-file-explorer-in-android.html
+//https://stackoverflow.com/questions/3592717/choose-file-dialog
 
 import java.io.File;
 import java.util.ArrayList;
@@ -16,7 +18,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-public class GalleryFolderChoiceActivity extends ListActivity {
+public class FolderChoiceActivity extends ListActivity {
 
     private List<String> item = null;
     private List<String> path = null;
@@ -30,7 +32,7 @@ public class GalleryFolderChoiceActivity extends ListActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_gallery_folder_choice);
+        setContentView(R.layout.activity_folder_choice);
 
         myPath = (TextView)findViewById(R.id.path);
         root = Environment.getExternalStorageDirectory().getPath();
@@ -121,7 +123,7 @@ public class GalleryFolderChoiceActivity extends ListActivity {
         Intent intent = new Intent();
         intent.putExtra("editTextValue", currentPath);
         setResult(RESULT_OK, intent);
-        //Toast.makeText(getApplicationContext(), "New path is: " + currentPath, Toast.LENGTH_SHORT).show();
+        //Toast.makeText(getApplicationContext(), "New directoryToImages is: " + currentPath, Toast.LENGTH_SHORT).show();
         finish();
     }
 

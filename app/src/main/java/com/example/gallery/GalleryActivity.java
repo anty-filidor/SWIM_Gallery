@@ -21,11 +21,13 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import android.view.View;
+import android.widget.TextView;
 import android.widget.Toast;
 
 
 public class GalleryActivity extends AppCompatActivity implements
-        GallerySettingsFragment.GalleryFragmentSettingsListener{
+        SettingsFragment.GalleryFragmentSettingsListener{
         //, Deprecated_GalleryFolderChoiceFragment.GalleryFolderChoiceFragmentListener{
 
     String intentMode;
@@ -33,11 +35,14 @@ public class GalleryActivity extends AppCompatActivity implements
 
     GalleryRecyclerAdapter adapter;
     RecyclerView recyclerView;
-    String path;
+    RecyclerView.LayoutManager layoutManager;
+    String directoryToImages;
 
     SharedPreferences folderChoice;
 
     ArrayList imageItems;
+
+    TextView emptyFolder;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,38 +51,45 @@ public class GalleryActivity extends AppCompatActivity implements
 
 
         //messages from start activity. They determine layout and onclickitem listener
-        Intent fromStartActivity = getIntent();
-        intentMode = fromStartActivity.getStringExtra("intentChoice");
-        layoutMode = fromStartActivity.getStringExtra("layoutChoice");
+        //Intent fromStartActivity = getIntent();
+        //intentMode = fromStartActivity.getStringExtra("intentChoice");
+        //layoutMode = fromStartActivity.getStringExtra("layoutChoice");
+
+        intentMode = "Wallpaper";
+        layoutMode = "Grid";
 
 
-        //set path to folder with photos and get data
+        //set directoryToImages to folder with photos and get data
         folderChoice = getSharedPreferences("recentFolderChoice", 0);
         if (folderChoice.getString("folderName", "") != null) {
-            path = folderChoice.getString("folderName", path);
+            directoryToImages = folderChoice.getString("folderName", directoryToImages);
         }
         else{
-            path = Environment.getExternalStorageDirectory().toString()+"/DCIM/Camera";
+            directoryToImages = Environment.getExternalStorageDirectory().toString()+"/DCIM/Camera";
         }
-        getData();
+        imageItems = getData();
 
 
         //create toolbar
         Toolbar toolbar = (Toolbar)findViewById(R.id.toolbar);
         if(toolbar != null) {
             setSupportActionBar(toolbar);
-            getSupportActionBar().setTitle(path);
+            getSupportActionBar().setTitle(directoryToImages);
         }
 
 
         //create recycler view to display gallery
         recyclerView = (RecyclerView)findViewById(R.id.recycler_view);
         recyclerView.setHasFixedSize(true);
-        RecyclerView.LayoutManager layoutManager = new GridLayoutManager(getApplicationContext(), 1);
+        layoutManager = new GridLayoutManager(getApplicationContext(), 1);
         recyclerView.setLayoutManager(layoutManager);
 
 
         //view accurate layout (in adapter) to user preferences
+        if(imageItems.isEmpty()) {
+            emptyFolder = findViewById(R.id.empty_folder);
+            emptyFolder.setVisibility(View.VISIBLE);
+        }
         if(layoutMode.equals("Grid")) {
             adapter = new GalleryRecyclerAdapter(getApplicationContext(), imageItems, intentMode, R.layout.item_layout_grid);
             ((GridLayoutManager) layoutManager).setSpanCount(4);
@@ -92,12 +104,14 @@ public class GalleryActivity extends AppCompatActivity implements
     //this method prepares data to display as images and titles
     private ArrayList getData() {
         imageItems = new ArrayList();
-        File directory = new File(path);
+        File directory = new File(directoryToImages);
         File[] imageFiles = directory.listFiles();
 
         for (int i = 0; i < imageFiles.length; i++) {
             String imagePath = imageFiles[i].getAbsolutePath();
-            imageItems.add(new ImageItem(imagePath, imageFiles[i].getName()));
+            if( imagePath.endsWith(".jpg") || imagePath.endsWith(".png") || imagePath.endsWith(".JPEG")){
+                imageItems.add(new ImageItem(imagePath, imageFiles[i].getName()));
+            }
         }
         return imageItems;
     }
@@ -137,14 +151,14 @@ public class GalleryActivity extends AppCompatActivity implements
     //this method shows galleryfragmentsettings fragment when selected in toolbar menu
     private void showPreferencesDialog() {
         FragmentManager fm = getSupportFragmentManager();
-        GallerySettingsFragment editNameDialogFragment = GallerySettingsFragment.newInstance();
+        SettingsFragment editNameDialogFragment = SettingsFragment.newInstance();
         editNameDialogFragment.show(fm, "fragment_edit_name");
     }
 
 
     //this method shows galleryfragmentfolderchoice fragment when selected in toolbar menu
     private void showFolderDialog() {
-        final Intent jj = new Intent(this, GalleryFolderChoiceActivity.class);
+        final Intent jj = new Intent(this, FolderChoiceActivity.class);
         startActivityForResult(jj, 1);
     }
 
@@ -153,7 +167,7 @@ public class GalleryActivity extends AppCompatActivity implements
     private void showAppInfo() {
         new AlertDialog.Builder(this)
                 .setTitle(R.string.info)
-                .setMessage(R.string.activity_start_author)
+                .setMessage(R.string.author)
                 .setPositiveButton("OK", null).show();
     }
 
@@ -162,13 +176,25 @@ public class GalleryActivity extends AppCompatActivity implements
         this.intentMode = intentMode;
         this.layoutMode = layoutMode;
         Toast.makeText(this, intentMode.concat(" ").concat(layoutMode), Toast.LENGTH_SHORT).show();
+
+        /*
+        //view accurate layout (in adapter) to user preferences
+        if(layoutMode.equals("Grid")) {
+            adapter = new GalleryRecyclerAdapter(getApplicationContext(), imageItems, intentMode, R.layout.item_layout_grid);
+            ((GridLayoutManager) layoutManager).setSpanCount(4);
+        }
+        else{
+            adapter = new GalleryRecyclerAdapter(getApplicationContext(), imageItems, intentMode, R.layout.item_layout_list);
+        }
+        recyclerView.setAdapter(adapter);
+        */
     }
 
 
     //deprecated
     /*
-    public void onFolderPassed(String path){
-        Toast.makeText(this, path, Toast.LENGTH_SHORT).show();
+    public void onFolderPassed(String directoryToImages){
+        Toast.makeText(this, directoryToImages, Toast.LENGTH_SHORT).show();
     }
     */
 
@@ -178,12 +204,12 @@ public class GalleryActivity extends AppCompatActivity implements
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == 1) {
             if(resultCode == RESULT_OK) {
-                path = data.getStringExtra("editTextValue");
-                Toast.makeText(this, ("New folder is ").concat(path), Toast.LENGTH_SHORT).show();
+                directoryToImages = data.getStringExtra("editTextValue");
+                Toast.makeText(this, ("New folder is ").concat(directoryToImages), Toast.LENGTH_SHORT).show();
 
                 SharedPreferences folderChoice = getSharedPreferences("recentFolderChoice", 0);
                 SharedPreferences.Editor editor = folderChoice.edit();
-                editor.putString("folderName", path);
+                editor.putString("folderName", directoryToImages);
                 editor.commit();
 
                 imageItems.clear();

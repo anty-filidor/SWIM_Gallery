@@ -42,7 +42,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="@string/activity_start_radio_share"
+            android:text="@string/share"
             android:textColor="@android:color/darker_gray" />
 
         <RadioButton
@@ -51,7 +51,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:checked="true"
-            android:text="@string/activity_start_radio_wallpaper"
+            android:text="@string/wallpaper"
             android:textColor="@android:color/darker_gray" />
 
     </RadioGroup>

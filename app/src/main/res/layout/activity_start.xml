@@ -45,14 +45,14 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="@string/activity_start_radio_share" />
+            android:text="@string/share" />
 
         <RadioButton
             android:id="@+id/radioButtonWallpaper"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="@string/activity_start_radio_wallpaper"
+            android:text="@string/wallpaper"
             android:checked="true"/>
 
     </RadioGroup>
@@ -87,7 +87,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginBottom="16dp"
-        android:text="@string/activity_start_author"
+        android:text="@string/author"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 

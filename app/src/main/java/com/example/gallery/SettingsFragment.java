@@ -16,7 +16,7 @@ import android.widget.Switch;
 import android.widget.TextView;
 
 
-public class GallerySettingsFragment extends DialogFragment {
+public class SettingsFragment extends DialogFragment {
 
     private String intentMode = "Wallpaper";
     private String layoutMode = "List";
@@ -32,13 +32,13 @@ public class GallerySettingsFragment extends DialogFragment {
     }
 
 
-    public GallerySettingsFragment() {
+    public SettingsFragment() {
         // Empty constructor is required for DialogFragment
     }
 
 
-    public static GallerySettingsFragment newInstance() {
-        GallerySettingsFragment frag = new GallerySettingsFragment();
+    public static SettingsFragment newInstance() {
+        SettingsFragment frag = new SettingsFragment();
         Bundle args = new Bundle();
         frag.setArguments(args);
         return frag;
@@ -48,7 +48,7 @@ public class GallerySettingsFragment extends DialogFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_gallery_settings, container);
+        return inflater.inflate(R.layout.fragment_settings, container);
     }
 
 
