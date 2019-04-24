@@ -1,5 +1,7 @@
 package com.example.gallery;
 
+import android.app.PendingIntent;
+import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
@@ -10,25 +12,21 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.CompoundButton;
-import android.widget.RadioButton;
-import android.widget.RadioGroup;
 import android.widget.Switch;
 import android.widget.TextView;
 
 
 public class SettingsFragment extends DialogFragment {
 
-    private String intentMode = "Wallpaper";
     private String layoutMode = "List";
     private TextView switch1TextView;
-    private RadioGroup radioGroup;
     private Switch switch1;
     private SharedPreferences settings;
     private Button button;
 
 
     public interface GalleryFragmentSettingsListener {
-        void onSettingsPassed(String intentMode, String layoutMode);
+        void onSettingsPassed(String layoutMode);
     }
 
 
@@ -62,25 +60,8 @@ public class SettingsFragment extends DialogFragment {
             @Override
             public void onClick(View v){
                 GalleryFragmentSettingsListener listener = (GalleryFragmentSettingsListener) getActivity();
-                listener.onSettingsPassed(intentMode, layoutMode);
+                listener.onSettingsPassed(layoutMode);
                 dismiss();
-            }
-        });
-
-
-        //radio button group
-        radioGroup = (RadioGroup) view.findViewById(R.id.radioGroup);
-        radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(RadioGroup group, int checkedId) {
-                RadioButton rb = group.findViewById(checkedId);
-                if (rb.getId() == R.id.radioButtonShare) {
-                    intentMode = "Share";
-                }
-                else if (rb.getId() == R.id.radioButtonWallpaper) {
-                    intentMode = "Wallpaper";
-                }
-                System.out.println(intentMode);
             }
         });
 

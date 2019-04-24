@@ -1,6 +1,6 @@
 <resources>
 
-    <string name="app_name">List 3 - Image gallery</string>
+    <string name="app_name">ImGal</string>
     <string name="activity_start_inspiration_1"><a href="https://www.androidauthority.com/how-to-build-an-image-gallery-app-718976">First inspiration!</a></string>
     <string name="activity_start_inspiration_2"><a href="https://www.stacktips.com/tutorials/android/android-gridview-example-building-image-gallery-in-android">Second inspiration!</a></string>
     <string name="activity_start_to_gallery">Run image gallery</string>

@@ -30,15 +30,16 @@ public class GalleryActivity extends AppCompatActivity implements
         SettingsFragment.GalleryFragmentSettingsListener{
         //, Deprecated_GalleryFolderChoiceFragment.GalleryFolderChoiceFragmentListener{
 
-    String intentMode;
-    String layoutMode;
 
     GalleryRecyclerAdapter adapter;
     RecyclerView recyclerView;
     RecyclerView.LayoutManager layoutManager;
+
     String directoryToImages;
+    String layoutMode;
 
     SharedPreferences folderChoice;
+    SharedPreferences layoutChoice;
 
     ArrayList imageItems;
 
@@ -50,24 +51,25 @@ public class GalleryActivity extends AppCompatActivity implements
         setContentView(R.layout.activity_gallery_recycler);
 
 
-        //messages from start activity. They determine layout and onclickitem listener
-        //Intent fromStartActivity = getIntent();
-        //intentMode = fromStartActivity.getStringExtra("intentChoice");
-        //layoutMode = fromStartActivity.getStringExtra("layoutChoice");
-
-        intentMode = "Wallpaper";
-        layoutMode = "Grid";
-
-
         //set directoryToImages to folder with photos and get data
         folderChoice = getSharedPreferences("recentFolderChoice", 0);
         if (folderChoice.getString("folderName", "") != null) {
-            directoryToImages = folderChoice.getString("folderName", directoryToImages);
+            directoryToImages = folderChoice.getString("folderName", "");
         }
         else{
             directoryToImages = Environment.getExternalStorageDirectory().toString()+"/DCIM/Camera";
         }
         imageItems = getData();
+
+
+        //set layout
+        layoutChoice = getSharedPreferences("recentLayoutChoice", 0);
+        if (layoutChoice.getString("layoutMode", "") != null) {
+            layoutMode = layoutChoice.getString("layoutMode", "");
+        }
+        else{
+            layoutMode = "Grid";
+        }
 
 
         //create toolbar
@@ -91,11 +93,12 @@ public class GalleryActivity extends AppCompatActivity implements
             emptyFolder.setVisibility(View.VISIBLE);
         }
         if(layoutMode.equals("Grid")) {
-            adapter = new GalleryRecyclerAdapter(getApplicationContext(), imageItems, intentMode, R.layout.item_layout_grid);
+            adapter = new GalleryRecyclerAdapter(getApplicationContext(), imageItems, R.layout.item_layout_grid);
             ((GridLayoutManager) layoutManager).setSpanCount(4);
         }
         else{
-            adapter = new GalleryRecyclerAdapter(getApplicationContext(), imageItems, intentMode, R.layout.item_layout_list);
+            adapter = new GalleryRecyclerAdapter(getApplicationContext(), imageItems, R.layout.item_layout_list);
+            ((GridLayoutManager) layoutManager).setSpanCount(1);
         }
         recyclerView.setAdapter(adapter);
     }
@@ -172,22 +175,28 @@ public class GalleryActivity extends AppCompatActivity implements
     }
 
 
-    public void onSettingsPassed(String intentMode, String layoutMode) {
-        this.intentMode = intentMode;
+    public void onSettingsPassed(String layoutMode) {
         this.layoutMode = layoutMode;
-        Toast.makeText(this, intentMode.concat(" ").concat(layoutMode), Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, layoutMode, Toast.LENGTH_SHORT).show();
 
-        /*
+        SharedPreferences layoutChoice = getSharedPreferences("recentLayoutChoice", 0);
+        SharedPreferences.Editor layoutEditor = layoutChoice.edit();
+        layoutEditor.putString("layoutMode", layoutMode);
+        layoutEditor.commit();
+
+
         //view accurate layout (in adapter) to user preferences
         if(layoutMode.equals("Grid")) {
-            adapter = new GalleryRecyclerAdapter(getApplicationContext(), imageItems, intentMode, R.layout.item_layout_grid);
+            adapter = new GalleryRecyclerAdapter(getApplicationContext(), imageItems, R.layout.item_layout_grid);
             ((GridLayoutManager) layoutManager).setSpanCount(4);
         }
         else{
-            adapter = new GalleryRecyclerAdapter(getApplicationContext(), imageItems, intentMode, R.layout.item_layout_list);
+            adapter = new GalleryRecyclerAdapter(getApplicationContext(), imageItems, R.layout.item_layout_list);
+            ((GridLayoutManager) layoutManager).setSpanCount(1);
         }
         recyclerView.setAdapter(adapter);
-        */
+
+
     }
 
 
@@ -199,7 +208,7 @@ public class GalleryActivity extends AppCompatActivity implements
     */
 
 
-    //this method reciewes data from folder explorer to save new folder
+    //this method receives data from folder explorer to save new folder
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == 1) {
@@ -208,9 +217,9 @@ public class GalleryActivity extends AppCompatActivity implements
                 Toast.makeText(this, ("New folder is ").concat(directoryToImages), Toast.LENGTH_SHORT).show();
 
                 SharedPreferences folderChoice = getSharedPreferences("recentFolderChoice", 0);
-                SharedPreferences.Editor editor = folderChoice.edit();
-                editor.putString("folderName", directoryToImages);
-                editor.commit();
+                SharedPreferences.Editor folderEditor = folderChoice.edit();
+                folderEditor.putString("folderName", directoryToImages);
+                folderEditor.commit();
 
                 imageItems.clear();
                 getData();

@@ -23,14 +23,12 @@ public class GalleryRecyclerAdapter extends RecyclerView.Adapter <GalleryRecycle
 
     private ArrayList data;
     private Context context;
-    private String intentMode;
     private int layoutName;
 
 
-    public GalleryRecyclerAdapter(Context context, ArrayList galleryList, String intentMode, int layoutName) {
+    public GalleryRecyclerAdapter(Context context, ArrayList galleryList, int layoutName) {
         this.data = galleryList;
         this.context = context;
-        this.intentMode = intentMode;
         this.layoutName = layoutName;
     }
 
