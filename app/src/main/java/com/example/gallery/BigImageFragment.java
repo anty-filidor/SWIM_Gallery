@@ -10,7 +10,13 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -20,6 +26,8 @@ import android.widget.Toast;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+
+import static com.example.gallery.RescaleImage.decodeSampledBitmapFromFile;
 
 public class BigImageFragment extends Fragment {
 
@@ -37,12 +45,12 @@ public class BigImageFragment extends Fragment {
         // Inflate the layout for this fragment
         View view =  inflater.inflate(R.layout.fragment_big_image, container, false);
 
-        title = view.findViewById(R.id.title);
-        title.setText(getArguments().getString("title"));
+        //title = view.findViewById(R.id.title);
+        //title.setText(getArguments().getString("title"));
 
         image = view.findViewById(R.id.image);
         image.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
-        image.setImageBitmap(BitmapFactory.decodeFile(getArguments().getString("image")));
+        image.setImageBitmap(decodeSampledBitmapFromFile(getArguments().getString("image"), 700, 700));
 
         share = view.findViewById(R.id.buttonShare);
         share.setOnClickListener(new View.OnClickListener() {
@@ -62,8 +70,26 @@ public class BigImageFragment extends Fragment {
             }
         });
 
+
+        //create toolbar
+        setHasOptionsMenu(true);
+        Toolbar toolbar = (Toolbar)view.findViewById(R.id.toolbar1);
+        if(toolbar != null) {
+            ((AppCompatActivity)getActivity()).setSupportActionBar(toolbar);
+            ((AppCompatActivity)getActivity()).getSupportActionBar().setTitle(getArguments().getString("title"));
+        }
         return view;
     }
+
+
+    //this method creates toolbar menu
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        menu.clear();
+        inflater.inflate(R.menu.manu_image_details, menu);
+        inflater.inflate(R.menu.menu_app_info, menu);
+    }
+
 
     //this method sets choosen image as wallpaper
     private void setWallpaper(String path){

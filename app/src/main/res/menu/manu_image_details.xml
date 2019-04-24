@@ -1,0 +1,6 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/image_info"
+        android:title="@string/image_info">
+    </item>
+</menu>

@@ -12,7 +12,6 @@ import android.os.Environment;
 
 
 import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -26,9 +25,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 
-public class GalleryActivity extends AppCompatActivity implements
-        SettingsFragment.GalleryFragmentSettingsListener{
-        //, Deprecated_GalleryFolderChoiceFragment.GalleryFolderChoiceFragmentListener{
+public class GalleryActivity extends AppCompatActivity implements SettingsFragment.GalleryFragmentSettingsListener{
 
 
     GalleryRecyclerAdapter adapter;
@@ -57,7 +54,7 @@ public class GalleryActivity extends AppCompatActivity implements
             directoryToImages = folderChoice.getString("folderName", "");
         }
         else{
-            directoryToImages = Environment.getExternalStorageDirectory().toString()+"/DCIM/Camera";
+            directoryToImages = Environment.getExternalStorageDirectory().toString();//+"/DCIM/Camera";
         }
         imageItems = getData();
 
@@ -125,10 +122,7 @@ public class GalleryActivity extends AppCompatActivity implements
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.manu_main, menu);
-
-        //create fragment manager to manage fragments (gallery settings)
-        FragmentManager fragmentManager = getSupportFragmentManager();
-        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+        getMenuInflater().inflate(R.menu.menu_app_info, menu);
 
         return true;
     }
@@ -144,8 +138,12 @@ public class GalleryActivity extends AppCompatActivity implements
             case R.id.folder:
                 showFolderDialog();
                 break;
-            case R.id.info:
+            case R.id.app_info:
                 showAppInfo();
+                break;
+            case R.id.image_info:
+                showImageInfo();
+                break;
         }
         return true;
     }
@@ -166,10 +164,16 @@ public class GalleryActivity extends AppCompatActivity implements
     }
 
 
+    //this method shows infofragment
+    private void showImageInfo() {
+        Toast.makeText(getApplicationContext(), "cunt", Toast.LENGTH_SHORT).show();
+    }
+
+
     //this method calls simple alertdialog to show author name
     private void showAppInfo() {
         new AlertDialog.Builder(this)
-                .setTitle(R.string.info)
+                .setTitle(R.string.app_info)
                 .setMessage(R.string.author)
                 .setPositiveButton("OK", null).show();
     }
@@ -198,14 +202,6 @@ public class GalleryActivity extends AppCompatActivity implements
 
 
     }
-
-
-    //deprecated
-    /*
-    public void onFolderPassed(String directoryToImages){
-        Toast.makeText(this, directoryToImages, Toast.LENGTH_SHORT).show();
-    }
-    */
 
 
     //this method receives data from folder explorer to save new folder
