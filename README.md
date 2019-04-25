@@ -7,3 +7,5 @@ Features:
 * setting selecetd image as wallpaper
 * sharing selected images
 * uses `SharedPreferences` to save settings
+
+Min API -> 24!
