@@ -12,11 +12,9 @@ import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -45,8 +43,6 @@ public class BigImageFragment extends Fragment {
         // Inflate the layout for this fragment
         View view =  inflater.inflate(R.layout.fragment_big_image, container, false);
 
-        //title = view.findViewById(R.id.title);
-        //title.setText(getArguments().getString("title"));
 
         image = view.findViewById(R.id.image);
         image.setScaleType(ImageView.ScaleType.CENTER_INSIDE);

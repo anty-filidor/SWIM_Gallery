@@ -25,7 +25,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 
-public class GalleryActivity extends AppCompatActivity implements SettingsFragment.GalleryFragmentSettingsListener{
+public class GalleryActivity extends AppCompatActivity implements
+        SettingsFragment.GalleryFragmentSettingsListener, GalleryRecyclerAdapter.RecyclerViewClickListener{
 
 
     GalleryRecyclerAdapter adapter;
@@ -41,6 +42,8 @@ public class GalleryActivity extends AppCompatActivity implements SettingsFragme
     ArrayList imageItems;
 
     TextView emptyFolder;
+
+    int currentImagePosition;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -85,16 +88,16 @@ public class GalleryActivity extends AppCompatActivity implements SettingsFragme
 
 
         //view accurate layout (in adapter) to user preferences
-        if(imageItems.isEmpty()) {
+        if(imageItems==null || imageItems.isEmpty()) {
             emptyFolder = findViewById(R.id.empty_folder);
             emptyFolder.setVisibility(View.VISIBLE);
         }
         if(layoutMode.equals("Grid")) {
-            adapter = new GalleryRecyclerAdapter(getApplicationContext(), imageItems, R.layout.item_layout_grid);
+            adapter = new GalleryRecyclerAdapter(getApplicationContext(), imageItems, R.layout.item_layout_grid, this);
             ((GridLayoutManager) layoutManager).setSpanCount(4);
         }
         else{
-            adapter = new GalleryRecyclerAdapter(getApplicationContext(), imageItems, R.layout.item_layout_list);
+            adapter = new GalleryRecyclerAdapter(getApplicationContext(), imageItems, R.layout.item_layout_list, this);
             ((GridLayoutManager) layoutManager).setSpanCount(1);
         }
         recyclerView.setAdapter(adapter);
@@ -106,11 +109,12 @@ public class GalleryActivity extends AppCompatActivity implements SettingsFragme
         imageItems = new ArrayList();
         File directory = new File(directoryToImages);
         File[] imageFiles = directory.listFiles();
-
-        for (int i = 0; i < imageFiles.length; i++) {
-            String imagePath = imageFiles[i].getAbsolutePath();
-            if( imagePath.endsWith(".jpg") || imagePath.endsWith(".png") || imagePath.endsWith(".JPEG")){
-                imageItems.add(new ImageItem(imagePath, imageFiles[i].getName()));
+        if(imageFiles!=null) {
+            for (int i = 0; i < imageFiles.length; i++) {
+                String imagePath = imageFiles[i].getAbsolutePath();
+                if (imagePath.endsWith(".jpg") || imagePath.endsWith(".png") || imagePath.endsWith(".JPEG")) {
+                    imageItems.add(new ImageItem(imagePath, imageFiles[i].getName()));
+                }
             }
         }
         return imageItems;
@@ -128,6 +132,7 @@ public class GalleryActivity extends AppCompatActivity implements SettingsFragme
     }
 
 
+    //this method defines action for click at menu
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
 
@@ -164,9 +169,12 @@ public class GalleryActivity extends AppCompatActivity implements SettingsFragme
     }
 
 
-    //this method shows infofragment
+    //this method shows info fragment
     private void showImageInfo() {
-        Toast.makeText(getApplicationContext(), "cunt", Toast.LENGTH_SHORT).show();
+        ImageItem temp = (ImageItem)imageItems.get(currentImagePosition);
+        Toast.makeText(getApplicationContext(), temp.getMetaData().get(1).get(1) + temp.getTitle(), Toast.LENGTH_SHORT).show();
+        temp.getMetaData().get(1).get(1);
+
     }
 
 
@@ -179,6 +187,7 @@ public class GalleryActivity extends AppCompatActivity implements SettingsFragme
     }
 
 
+    //this method saves and updates current layout
     public void onSettingsPassed(String layoutMode) {
         this.layoutMode = layoutMode;
         Toast.makeText(this, layoutMode, Toast.LENGTH_SHORT).show();
@@ -191,16 +200,23 @@ public class GalleryActivity extends AppCompatActivity implements SettingsFragme
 
         //view accurate layout (in adapter) to user preferences
         if(layoutMode.equals("Grid")) {
-            adapter = new GalleryRecyclerAdapter(getApplicationContext(), imageItems, R.layout.item_layout_grid);
+            adapter = new GalleryRecyclerAdapter(getApplicationContext(), imageItems, R.layout.item_layout_grid, this);
             ((GridLayoutManager) layoutManager).setSpanCount(4);
         }
         else{
-            adapter = new GalleryRecyclerAdapter(getApplicationContext(), imageItems, R.layout.item_layout_list);
+            adapter = new GalleryRecyclerAdapter(getApplicationContext(), imageItems, R.layout.item_layout_list, this);
             ((GridLayoutManager) layoutManager).setSpanCount(1);
         }
         recyclerView.setAdapter(adapter);
 
 
+    }
+
+
+    //this method saves position in imageItems array of ImageItem which was already clicked
+    @Override
+    public void recyclerViewListClicked(View v, int position){
+        currentImagePosition = position;
     }
 
 
