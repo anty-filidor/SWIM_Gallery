@@ -1,7 +1,6 @@
 package com.example.gallery;
 
 
-
 import android.content.Context;
 import android.os.Bundle;
 

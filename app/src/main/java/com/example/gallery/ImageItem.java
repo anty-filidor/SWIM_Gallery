@@ -108,13 +108,14 @@ public class ImageItem {
             metaDataTitles.add("Orientation:");
             metaDataValues.add(addMetaData(exif, ExifInterface.TAG_ORIENTATION));
 
-
+            /*
             Iterator itr1 = metaDataValues.listIterator();
             Iterator itr2 = metaDataTitles.listIterator();
             while(itr1.hasNext()) {
                 Log.e("metadata Title", (String) itr2.next());
                 Log.e("metadata Value", (String) itr1.next());
             }
+            */
 
 
         } catch(IOException e){

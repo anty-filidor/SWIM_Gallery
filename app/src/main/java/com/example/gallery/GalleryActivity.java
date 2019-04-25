@@ -25,6 +25,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 
+
 public class GalleryActivity extends AppCompatActivity implements
         SettingsFragment.GalleryFragmentSettingsListener, GalleryRecyclerAdapter.RecyclerViewClickListener{
 
@@ -164,16 +165,26 @@ public class GalleryActivity extends AppCompatActivity implements
 
     //this method shows galleryfragmentfolderchoice fragment when selected in toolbar menu
     private void showFolderDialog() {
-        final Intent jj = new Intent(this, FolderChoiceActivity.class);
-        startActivityForResult(jj, 1);
+        final Intent intent = new Intent(this, FolderChoiceActivity.class);
+        startActivityForResult(intent, 1);
     }
 
 
     //this method shows info fragment
     private void showImageInfo() {
         ImageItem temp = (ImageItem)imageItems.get(currentImagePosition);
-        Toast.makeText(getApplicationContext(), temp.getMetaData().get(1).get(1) + temp.getTitle(), Toast.LENGTH_SHORT).show();
-        temp.getMetaData().get(1).get(1);
+        ArrayList<ArrayList<String>> list = temp.getMetaData();
+        Bundle bundle = new Bundle();
+        bundle.putStringArrayList("titles", list.get(0));
+        bundle.putStringArrayList("values", list.get(1));
+        bundle.putString("title", temp.getTitle());
+
+        ImageDetailsFragment imageDetailsFragment = new ImageDetailsFragment();
+        imageDetailsFragment.setArguments(bundle);
+
+        this.getSupportFragmentManager().beginTransaction().
+                replace(R.id.child_fragment_container, imageDetailsFragment)
+                .addToBackStack(null).commit();
 
     }
 

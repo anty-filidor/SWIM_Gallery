@@ -37,6 +37,7 @@ public class BigImageFragment extends Fragment {
 
     public BigImageFragment() {}
 
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
