@@ -51,8 +51,6 @@ public class ImageDetailsFragment extends Fragment {
 
         title = bundle.getString("title");
 
-        //Log.e("aaa", titles.size()+"");
-        //Log.e("aaa", values.size()+"");
 
         View view =  inflater.inflate(R.layout.fragment_image_details, container, false);
 

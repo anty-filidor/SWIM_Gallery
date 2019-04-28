@@ -12,7 +12,6 @@
         android:minHeight="?attr/actionBarSize">
     </android.support.v7.widget.Toolbar>
 
-
     <android.support.v4.view.ViewPager
         xmlns:android="http://schemas.android.com/apk/res/android"
         android:id="@+id/pager"

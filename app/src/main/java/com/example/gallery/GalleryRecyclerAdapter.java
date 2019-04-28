@@ -6,6 +6,7 @@ import android.os.Bundle;
 
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,19 +25,13 @@ public class GalleryRecyclerAdapter extends RecyclerView.Adapter <GalleryRecycle
     private ArrayList data;
     private Context context;
     private int layoutName;
-    private static RecyclerViewClickListener itemListener;
 
-    //interface to make litrener in galleryActivity
-    public interface RecyclerViewClickListener {
-        void recyclerViewListClicked(View v, int position);
-    }
 
     //adapter constructor
-    public GalleryRecyclerAdapter(Context context, ArrayList galleryList, int layoutName, RecyclerViewClickListener itemListener) {
+    public GalleryRecyclerAdapter(Context context, ArrayList galleryList, int layoutName) {
         this.data = galleryList;
         this.context = context;
         this.layoutName = layoutName;
-        this.itemListener = itemListener;
     }
 
 
@@ -61,17 +56,17 @@ public class GalleryRecyclerAdapter extends RecyclerView.Adapter <GalleryRecycle
         viewHolder.image.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
+                Log.e("debug", "Clicked in gallery recycler adapter position: " + position);
                 AppCompatActivity activity = (AppCompatActivity) v.getContext();
                 BigImageFragment bigImageFragment = new BigImageFragment();
                 Bundle bundle = new Bundle();
-                bundle.putString("image", item.getPath());
-                bundle.putString("title", item.getTitle());
+                bundle.putInt("position", position);
+                bundle.putParcelableArrayList("data", data);
                 bigImageFragment.setArguments(bundle);
-                activity.getSupportFragmentManager().beginTransaction().
-                        replace(R.id.child_fragment_container, bigImageFragment)
-                        .addToBackStack(null).commit();
 
-                itemListener.recyclerViewListClicked(v, position);
+                activity.getSupportFragmentManager().beginTransaction().
+                        replace(R.id.big_image_fragment_container, bigImageFragment)
+                        .addToBackStack(null).commit();
             }
         });
     }

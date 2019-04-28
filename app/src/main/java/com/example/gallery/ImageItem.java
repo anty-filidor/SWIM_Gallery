@@ -3,6 +3,8 @@ package com.example.gallery;
 
 import android.graphics.BitmapFactory;
 import android.media.ExifInterface;
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.util.Log;
 
 import java.io.File;
@@ -11,10 +13,11 @@ import java.sql.Date;
 import java.util.ArrayList;
 import java.util.Iterator;
 
-public class ImageItem {
+public class ImageItem implements Parcelable {
 
     private String path;
     private String title;
+
 
     public ImageItem(String path, String title) {
         super();
@@ -22,17 +25,54 @@ public class ImageItem {
         this.title = title;
     }
 
+
+    public ImageItem(Parcel in) {
+        super();
+        readFromParcel(in);
+    }
+
+
+    public static final Parcelable.Creator<ImageItem> CREATOR = new Parcelable.Creator<ImageItem>() {
+        public ImageItem createFromParcel(Parcel in) {
+            return new ImageItem(in);
+        }
+        public ImageItem[] newArray(int size) {
+            return new ImageItem[size];
+        }
+    };
+
+
+    public void readFromParcel(Parcel in) {
+        path = in.readString();
+        title = in.readString();
+    }
+
+
+    public int describeContents() {
+        return 0;
+    }
+
+
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(path);
+        dest.writeString(title);
+    }
+
+
     public String getPath() {
         return path;
     }
+
 
     public void setPath(String path) {
         this.path = path;
     }
 
+
     public String getTitle() {
         return title;
     }
+
 
     public void setTitle(String title) {
         this.title = title;
@@ -129,6 +169,7 @@ public class ImageItem {
         return finalList;
 
     }
+
 
     private String addMetaData(ExifInterface exif, String TAG){
         if(exif.getAttribute(TAG)==null){

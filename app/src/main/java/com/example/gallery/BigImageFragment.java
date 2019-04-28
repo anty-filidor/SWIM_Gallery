@@ -1,80 +1,75 @@
 package com.example.gallery;
 
-
-import android.app.WallpaperManager;
-import android.content.Context;
-import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.net.Uri;
 import android.os.Bundle;
-import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentStatePagerAdapter;
+import android.support.v4.app.FragmentTransaction;
+import android.support.v4.view.PagerAdapter;
+import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.ImageView;
-import android.widget.TextView;
-import android.widget.Toast;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-
-import static com.example.gallery.RescaleImage.decodeSampledBitmapFromFile;
-
-public class BigImageFragment extends Fragment {
-
-    private TextView title;
-    private ImageView image;
-    private Button setWallpaper;
-    private Button share;
+import java.util.ArrayList;
 
 
-    public BigImageFragment() {}
+public class BigImageFragment extends Fragment{
+
+
+    private ViewPager mPager;
+    private PagerAdapter pagerAdapter;
+
+    private ArrayList<ImageItem> data;
+
+    private int currentPage;
 
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        //Log.e("debug", "in big image fragment oncreateview!");
+        super.onCreate(savedInstanceState);
+
+        //get arguments - get image metadata and save them in titles and values
+        data = getArguments().getParcelableArrayList("data");
+
         View view =  inflater.inflate(R.layout.fragment_big_image, container, false);
-
-
-        image = view.findViewById(R.id.image);
-        image.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
-        image.setImageBitmap(decodeSampledBitmapFromFile(getArguments().getString("image"), 700, 700));
-
-        share = view.findViewById(R.id.buttonShare);
-        share.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                shareImage(getArguments().getString("image"));
-            }
-        });
-
-
-
-        setWallpaper = view.findViewById(R.id.buttonWallpaper);
-        setWallpaper.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                setWallpaper(getArguments().getString("image"));
-            }
-        });
 
 
         //create toolbar
         setHasOptionsMenu(true);
-        Toolbar toolbar = (Toolbar)view.findViewById(R.id.toolbar1);
+        final Toolbar toolbar = (Toolbar)view.findViewById(R.id.toolbar1);
         if(toolbar != null) {
+            Log.e("debug", "in bigImageSlidePageFragment, found toolbar for position: " + getArguments().getInt("position"));
             ((AppCompatActivity)getActivity()).setSupportActionBar(toolbar);
-            ((AppCompatActivity)getActivity()).getSupportActionBar().setTitle(getArguments().getString("title"));
+            ((AppCompatActivity)getActivity()).getSupportActionBar().setTitle(data.get(getArguments().getInt("position")).getTitle());
         }
+        else{Log.e("debug", "in bigImageSlidePageFragment, toolbar not found!");}
+
+
+        // Instantiate a ViewPager and a PagerAdapter.
+        mPager = (ViewPager) view.findViewById(R.id.pager);
+        ViewPager.OnPageChangeListener pageChangeListener = new ViewPager.SimpleOnPageChangeListener(){
+            @Override
+            public void onPageSelected(int position) {
+                currentPage = position;
+                if(toolbar != null) {
+                    Log.e("debug", "in bigImageSlidePageFragment, found toolbar for position: " + position);
+                    ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle(data.get(currentPage).getTitle());
+                }
+            }
+        };
+        mPager.addOnPageChangeListener(pageChangeListener);
+        pagerAdapter = new ScreenSlidePagerAdapter(((AppCompatActivity)getActivity()).getSupportFragmentManager());
+        mPager.setAdapter(pagerAdapter);
+        mPager.setCurrentItem(getArguments().getInt("position"));
+
         return view;
     }
 
@@ -82,42 +77,70 @@ public class BigImageFragment extends Fragment {
     //this method creates toolbar menu
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        Log.e("debug", "in bigImageSlidePageFragment, creating toolbar for position: "+ getArguments().getInt("position"));
         menu.clear();
         inflater.inflate(R.menu.manu_image_details, menu);
         inflater.inflate(R.menu.menu_app_info, menu);
     }
 
 
-    //this method sets choosen image as wallpaper
-    private void setWallpaper(String path){
-        final WallpaperManager wallpaperManager = WallpaperManager.getInstance(getContext());
-        try {
-            wallpaperManager.setBitmap(BitmapFactory.decodeFile(path));
-            Toast.makeText(getContext(), "Set wallpaper", Toast.LENGTH_SHORT).show();
+    //this method defines action for click at menu
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        Log.e("debug", "in bigImageSlidePageFragment in TOOLBAR! "+currentPage);
+        int id = item.getItemId();
+        switch (id) {
+            case R.id.image_info:
+                Log.e("debug", "in bigImageSlidePageFragment in IMAGE INFO!");
+                showImageInfo();
+                break;
         }
-        catch (IOException e) {}
+        return false;
     }
 
 
-    //this method returns image uri to share
-    private Uri getImageUri(Context inContext, Bitmap inImage, String title) {
-        ByteArrayOutputStream bytes = new ByteArrayOutputStream();
-        inImage.compress(Bitmap.CompressFormat.JPEG, 100, bytes);
-        String path = MediaStore.Images.Media.insertImage(inContext.getContentResolver(), inImage, title, null);
-        return Uri.parse(path);
+    private void showImageInfo() {
+        Log.e("debug", "in bigImageSlidePageFragment in showimageinfo!!!! "+currentPage);
+        ArrayList<ArrayList<String>> list = data.get(currentPage).getMetaData();
+        Bundle bundle = new Bundle();
+        bundle.putStringArrayList("titles", list.get(0));
+        bundle.putStringArrayList("values", list.get(1));
+        bundle.putString("title", data.get(currentPage).getTitle());
+
+        ImageDetailsFragment imageDetailsFragment = new ImageDetailsFragment();
+        imageDetailsFragment.setArguments(bundle);
+        getActivity().getSupportFragmentManager().beginTransaction().
+                replace(R.id.big_image_fragment_container, imageDetailsFragment).addToBackStack(null).commit();
     }
 
 
-    //this method calls share action to share choosen image
-    private void shareImage(String path){
-        Intent sharingIntent = new Intent(android.content.Intent.ACTION_SEND);
-        Uri image = getImageUri(getContext(), BitmapFactory.decodeFile(path), path);
+    private class ScreenSlidePagerAdapter extends FragmentStatePagerAdapter {
+        public ScreenSlidePagerAdapter(FragmentManager fm) {
+            super(fm);
+        }
 
-        sharingIntent.setAction(Intent.ACTION_SEND);
-        sharingIntent.putExtra(Intent.EXTRA_STREAM, image);
-        sharingIntent.setType("image/jpeg");
 
-        getContext().startActivity(Intent.createChooser(sharingIntent, "Share via"));
+        @Override
+        public Fragment getItem(int position) {
+            Bundle bundle = new Bundle();
+            for(int i = 0 ; i < getCount() ; i++){
+                if(position == i){
+                    Log.e("debug", "in bigimagefragment, creating view for position: "+position);
+                    BigImageSlidePageFragment bigImageSlidePageFragment =  new BigImageSlidePageFragment();
+                    bundle.putParcelable("imageItem", data.get(position));
+                    bundle.putInt("position", position);
+                    bigImageSlidePageFragment.setArguments(bundle);
+                    return bigImageSlidePageFragment;
+                }
+            }
+            return null;
+        }
+
+        @Override
+        public int getCount() {
+            return data.size();
+        }
     }
 
 }
+

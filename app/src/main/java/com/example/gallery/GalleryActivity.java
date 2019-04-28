@@ -27,7 +27,7 @@ import android.widget.Toast;
 
 
 public class GalleryActivity extends AppCompatActivity implements
-        SettingsFragment.GalleryFragmentSettingsListener, GalleryRecyclerAdapter.RecyclerViewClickListener{
+        SettingsFragment.GalleryFragmentSettingsListener{
 
 
     GalleryRecyclerAdapter adapter;
@@ -43,8 +43,6 @@ public class GalleryActivity extends AppCompatActivity implements
     ArrayList imageItems;
 
     TextView emptyFolder;
-
-    int currentImagePosition;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -94,11 +92,11 @@ public class GalleryActivity extends AppCompatActivity implements
             emptyFolder.setVisibility(View.VISIBLE);
         }
         if(layoutMode.equals("Grid")) {
-            adapter = new GalleryRecyclerAdapter(getApplicationContext(), imageItems, R.layout.item_layout_grid, this);
+            adapter = new GalleryRecyclerAdapter(getApplicationContext(), imageItems, R.layout.item_layout_grid);
             ((GridLayoutManager) layoutManager).setSpanCount(4);
         }
         else{
-            adapter = new GalleryRecyclerAdapter(getApplicationContext(), imageItems, R.layout.item_layout_list, this);
+            adapter = new GalleryRecyclerAdapter(getApplicationContext(), imageItems, R.layout.item_layout_list);
             ((GridLayoutManager) layoutManager).setSpanCount(1);
         }
         recyclerView.setAdapter(adapter);
@@ -128,7 +126,6 @@ public class GalleryActivity extends AppCompatActivity implements
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.manu_main, menu);
         getMenuInflater().inflate(R.menu.menu_app_info, menu);
-
         return true;
     }
 
@@ -136,8 +133,8 @@ public class GalleryActivity extends AppCompatActivity implements
     //this method defines action for click at menu
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-
-        switch (item.getItemId()) {
+        int id = item.getItemId();
+        switch (id) {
             case R.id.preferences:
                 showPreferencesDialog();
                 break;
@@ -147,11 +144,8 @@ public class GalleryActivity extends AppCompatActivity implements
             case R.id.app_info:
                 showAppInfo();
                 break;
-            case R.id.image_info:
-                showImageInfo();
-                break;
         }
-        return true;
+        return super.onOptionsItemSelected(item);
     }
 
 
@@ -167,25 +161,6 @@ public class GalleryActivity extends AppCompatActivity implements
     private void showFolderDialog() {
         final Intent intent = new Intent(this, FolderChoiceActivity.class);
         startActivityForResult(intent, 1);
-    }
-
-
-    //this method shows info fragment
-    private void showImageInfo() {
-        ImageItem temp = (ImageItem)imageItems.get(currentImagePosition);
-        ArrayList<ArrayList<String>> list = temp.getMetaData();
-        Bundle bundle = new Bundle();
-        bundle.putStringArrayList("titles", list.get(0));
-        bundle.putStringArrayList("values", list.get(1));
-        bundle.putString("title", temp.getTitle());
-
-        ImageDetailsFragment imageDetailsFragment = new ImageDetailsFragment();
-        imageDetailsFragment.setArguments(bundle);
-
-        this.getSupportFragmentManager().beginTransaction().
-                replace(R.id.child_fragment_container, imageDetailsFragment)
-                .addToBackStack(null).commit();
-
     }
 
 
@@ -210,24 +185,14 @@ public class GalleryActivity extends AppCompatActivity implements
 
 
         //view accurate layout (in adapter) to user preferences
-        if(layoutMode.equals("Grid")) {
-            adapter = new GalleryRecyclerAdapter(getApplicationContext(), imageItems, R.layout.item_layout_grid, this);
+        if (layoutMode.equals("Grid")) {
+            adapter = new GalleryRecyclerAdapter(getApplicationContext(), imageItems, R.layout.item_layout_grid);
             ((GridLayoutManager) layoutManager).setSpanCount(4);
-        }
-        else{
-            adapter = new GalleryRecyclerAdapter(getApplicationContext(), imageItems, R.layout.item_layout_list, this);
+        } else {
+            adapter = new GalleryRecyclerAdapter(getApplicationContext(), imageItems, R.layout.item_layout_list);
             ((GridLayoutManager) layoutManager).setSpanCount(1);
         }
         recyclerView.setAdapter(adapter);
-
-
-    }
-
-
-    //this method saves position in imageItems array of ImageItem which was already clicked
-    @Override
-    public void recyclerViewListClicked(View v, int position){
-        currentImagePosition = position;
     }
 
 
