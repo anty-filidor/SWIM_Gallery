@@ -1,14 +1,18 @@
 <resources>
 
-    <string name="app_name">List 2 - Image gallery</string>
-    <string name="activity_start_inspiration_1"><a href="https://www.androidauthority.com/how-to-build-an-image-gallery-app-718976">First inspiration!</a></string>
-    <string name="activity_start_inspiration_2"><a href="https://www.stacktips.com/tutorials/android/android-gridview-example-building-image-gallery-in-android">Second inspiration!</a></string>
-    <string name="activity_start_to_gallery">Run image gallery</string>
-    <string name="activity_start_author">Author - Michał Czuba</string>
-    <string name="activity_start_radio_share">Share image</string>
-    <string name="activity_start_radio_wallpaper">Set as wallpaper</string>
+    <string name="app_name">ImGal</string>
+    <string name="author">Author - Michał Czuba\n\nThis is simple gallery!</string>
+    <string name="share">Share this image</string>
+    <string name="wallpaper">Set as wallpaper</string>
     <string name="activity_start_switch_layout_grid">Grid layout selected</string>
     <string name="activity_start_switch_layout_list">List layout selected</string>
     <string name="activity_start_switch_layout_switch">Set layout</string>
+    <string name="select_folder">Select folder</string>
+    <string name="select_preferences">Select view</string>
+    <string name="apply">Apply</string>
+    <string name="select_layout">SELECT LAYOUT</string>
+    <string name="app_info">App info</string>
+    <string name="image_info">Image details</string>
+    <string name="empty_folder">This directory contains no images!</string>
 
 </resources>

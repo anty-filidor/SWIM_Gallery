@@ -1,133 +1,218 @@
 package com.example.gallery;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 
-import android.content.Context;
+import android.app.AlertDialog;
 import android.content.Intent;
-import android.net.Uri;
+
+import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.os.Environment;
-import android.provider.MediaStore;
+
+
+import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
+
+import android.view.Menu;
+import android.view.MenuItem;
+
 import android.view.View;
-import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemClickListener;
-import android.widget.GridView;
-import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
-import android.app.WallpaperManager;
 
 
-public class GalleryActivity extends AppCompatActivity {
+public class GalleryActivity extends AppCompatActivity implements
+        SettingsFragment.GalleryFragmentSettingsListener{
 
-    private ListView listView;
-    private GridView gridView;
-    private GalleryViewAdapter Adapter;
+
+    GalleryRecyclerAdapter adapter;
+    RecyclerView recyclerView;
+    RecyclerView.LayoutManager layoutManager;
+
+    String directoryToImages;
+    String layoutMode;
+
+    SharedPreferences folderChoice;
+    SharedPreferences layoutChoice;
+
+    ArrayList imageItems;
+
+    TextView emptyFolder;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_gallery_recycler);
 
 
-        //messages from start activity. They determine layout and onclickitem listener
-        Intent fromStartActivity = getIntent();
-        final String intentMode = fromStartActivity.getStringExtra("intentChoice");
-        String layoutMode = fromStartActivity.getStringExtra("layoutChoice");
-        System.out.println("Message: " + layoutMode);
+        //set directoryToImages to folder with photos and get data
+        folderChoice = getSharedPreferences("recentFolderChoice", 0);
+        if (folderChoice.getString("folderName", "") != null) {
+            directoryToImages = folderChoice.getString("folderName", "");
+        }
+        else{
+            directoryToImages = Environment.getExternalStorageDirectory().toString();//+"/DCIM/Camera";
+        }
+        imageItems = getData();
 
 
-        if(layoutMode.equals("List")) {
-            System.out.println("in list block");
-            setContentView(R.layout.activity_gallery_list);
-            listView = (ListView) findViewById(R.id.activity_gallery_listView);
-            Adapter = new GalleryViewAdapter(this, R.layout.item_layout_list, getData());
-            listView.setAdapter(Adapter);
-
-            listView.setOnItemClickListener(new OnItemClickListener() {
-                public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
-                    ImageItem item = (ImageItem) parent.getItemAtPosition(position);
-
-                    if(intentMode.equals("Wallpaper")) {
-                        setWallpaper(item);
-                    }
-                    else if(intentMode.equals("Share")) {
-                        shareImage(item);
-                    }
-                }
-            });
+        //set layout
+        layoutChoice = getSharedPreferences("recentLayoutChoice", 0);
+        if (layoutChoice.getString("layoutMode", "") != null) {
+            layoutMode = layoutChoice.getString("layoutMode", "");
+        }
+        else{
+            layoutMode = "Grid";
         }
 
 
-        else if(layoutMode.equals("Grid")){
-            System.out.println("in grid block");
-            setContentView(R.layout.activity_gallery_grid);
-            gridView = (GridView) findViewById(R.id.activity_gallery_gridView);
-            Adapter = new GalleryViewAdapter(this, R.layout.item_layout_grid, getData());
-            gridView.setAdapter(Adapter);
-
-            gridView.setOnItemClickListener(new OnItemClickListener() {
-                public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
-                    ImageItem item = (ImageItem) parent.getItemAtPosition(position);
-
-                    if(intentMode.equals("Wallpaper")) {
-                        setWallpaper(item);
-                    }
-                    else if(intentMode.equals("Share")) {
-                        shareImage(item);
-                    }
-                }
-            });
+        //create toolbar
+        Toolbar toolbar = (Toolbar)findViewById(R.id.toolbar);
+        if(toolbar != null) {
+            setSupportActionBar(toolbar);
+            getSupportActionBar().setTitle(directoryToImages);
         }
 
-    }
+
+        //create recycler view to display gallery
+        recyclerView = (RecyclerView)findViewById(R.id.recycler_view);
+        recyclerView.setHasFixedSize(true);
+        layoutManager = new GridLayoutManager(getApplicationContext(), 1);
+        recyclerView.setLayoutManager(layoutManager);
 
 
-    private void setWallpaper(ImageItem item){
-        final WallpaperManager wallpaperManager = WallpaperManager.getInstance(getApplicationContext());
-        try {
-            wallpaperManager.setBitmap(item.getImage());
-            Toast.makeText(getApplicationContext(), "New wallpaper: "+ item.getTitle(), Toast.LENGTH_SHORT).show();
+        //view accurate layout (in adapter) to user preferences
+        if(imageItems==null || imageItems.isEmpty()) {
+            emptyFolder = findViewById(R.id.empty_folder);
+            emptyFolder.setVisibility(View.VISIBLE);
         }
-        catch (IOException e) {}
-    }
-
-    private Uri getImageUri(Context inContext, Bitmap inImage, String title) {
-        ByteArrayOutputStream bytes = new ByteArrayOutputStream();
-        inImage.compress(Bitmap.CompressFormat.JPEG, 100, bytes);
-        String path = MediaStore.Images.Media.insertImage(inContext.getContentResolver(), inImage, title, null);
-        return Uri.parse(path);
-    }
-
-    private void shareImage(ImageItem item){
-        Intent sharingIntent = new Intent(android.content.Intent.ACTION_SEND);
-        Uri image = getImageUri(getApplicationContext(), item.getImage(), item.getTitle());
-
-        sharingIntent.setAction(Intent.ACTION_SEND);
-        sharingIntent.putExtra(Intent.EXTRA_STREAM, image);
-        sharingIntent.setType("image/jpeg");
-
-        startActivity(Intent.createChooser(sharingIntent, "Share via"));
-
-        Toast.makeText(getApplicationContext(), "Shared: "+ item.getTitle(), Toast.LENGTH_SHORT).show();
+        if(layoutMode.equals("Grid")) {
+            adapter = new GalleryRecyclerAdapter(getApplicationContext(), imageItems, R.layout.item_layout_grid);
+            ((GridLayoutManager) layoutManager).setSpanCount(4);
+        }
+        else{
+            adapter = new GalleryRecyclerAdapter(getApplicationContext(), imageItems, R.layout.item_layout_list);
+            ((GridLayoutManager) layoutManager).setSpanCount(1);
+        }
+        recyclerView.setAdapter(adapter);
     }
 
 
+    //this method prepares data to display as images and titles
     private ArrayList getData() {
-        final ArrayList imageItems = new ArrayList();
-        String path = Environment.getExternalStorageDirectory().toString()+"/DCIM/Camera";
-        File directory = new File(path);
+        imageItems = new ArrayList();
+        File directory = new File(directoryToImages);
         File[] imageFiles = directory.listFiles();
-
-        for (int i = 0; i < imageFiles.length; i++) {
-            Bitmap bitmap = BitmapFactory.decodeFile(imageFiles[i].getAbsolutePath());
-            imageItems.add(new ImageItem(bitmap, imageFiles[i].getName()));
+        if(imageFiles!=null) {
+            for (int i = 0; i < imageFiles.length; i++) {
+                String imagePath = imageFiles[i].getAbsolutePath();
+                if (imagePath.endsWith(".jpg") || imagePath.endsWith(".png") || imagePath.endsWith(".JPEG")) {
+                    imageItems.add(new ImageItem(imagePath, imageFiles[i].getName()));
+                }
+            }
         }
         return imageItems;
+    }
+
+
+    //this method creates toolbar menu
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.manu_main, menu);
+        getMenuInflater().inflate(R.menu.menu_app_info, menu);
+        return true;
+    }
+
+
+    //this method defines action for click at menu
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+        switch (id) {
+            case R.id.preferences:
+                showPreferencesDialog();
+                break;
+            case R.id.folder:
+                showFolderDialog();
+                break;
+            case R.id.app_info:
+                showAppInfo();
+                break;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+
+    //this method shows galleryfragmentsettings fragment when selected in toolbar menu
+    private void showPreferencesDialog() {
+        FragmentManager fm = getSupportFragmentManager();
+        SettingsFragment editNameDialogFragment = SettingsFragment.newInstance();
+        editNameDialogFragment.show(fm, "fragment_edit_name");
+    }
+
+
+    //this method shows galleryfragmentfolderchoice fragment when selected in toolbar menu
+    private void showFolderDialog() {
+        final Intent intent = new Intent(this, FolderChoiceActivity.class);
+        startActivityForResult(intent, 1);
+    }
+
+
+    //this method calls simple alertdialog to show author name
+    private void showAppInfo() {
+        new AlertDialog.Builder(this)
+                .setTitle(R.string.app_info)
+                .setMessage(R.string.author)
+                .setPositiveButton("OK", null).show();
+    }
+
+
+    //this method saves and updates current layout
+    public void onSettingsPassed(String layoutMode) {
+        this.layoutMode = layoutMode;
+        Toast.makeText(this, layoutMode, Toast.LENGTH_SHORT).show();
+
+        SharedPreferences layoutChoice = getSharedPreferences("recentLayoutChoice", 0);
+        SharedPreferences.Editor layoutEditor = layoutChoice.edit();
+        layoutEditor.putString("layoutMode", layoutMode);
+        layoutEditor.commit();
+
+
+        //view accurate layout (in adapter) to user preferences
+        if (layoutMode.equals("Grid")) {
+            adapter = new GalleryRecyclerAdapter(getApplicationContext(), imageItems, R.layout.item_layout_grid);
+            ((GridLayoutManager) layoutManager).setSpanCount(4);
+        } else {
+            adapter = new GalleryRecyclerAdapter(getApplicationContext(), imageItems, R.layout.item_layout_list);
+            ((GridLayoutManager) layoutManager).setSpanCount(1);
+        }
+        recyclerView.setAdapter(adapter);
+    }
+
+
+    //this method receives data from folder explorer to save new folder
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == 1) {
+            if(resultCode == RESULT_OK) {
+                directoryToImages = data.getStringExtra("editTextValue");
+                Toast.makeText(this, ("New folder is ").concat(directoryToImages), Toast.LENGTH_SHORT).show();
+
+                SharedPreferences folderChoice = getSharedPreferences("recentFolderChoice", 0);
+                SharedPreferences.Editor folderEditor = folderChoice.edit();
+                folderEditor.putString("folderName", directoryToImages);
+                folderEditor.commit();
+
+                imageItems.clear();
+                getData();
+                adapter.notifyDataSetChanged();
+            }
+        }
     }
 }
